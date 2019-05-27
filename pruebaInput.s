@@ -93,26 +93,22 @@ main:
 
 	hardwaremode:
 		mov r10, #250
-		//mov r6, #1
+		mov r6, #1
 		bl retro
 		mov r0, #15
 		bl GetGpio
 		teq r0, #0
 		bne disminuir
-		//ldrne r0, =presiona
-		//blne printf
 		bl retro
 		mov r0, #14
 		bl GetGpio
-		cmp r0, #1
-		beq aumentar
-		bne hardwaremode
+		teq r0, #0
+		bne aumentar
 		bl retro
 		mov r0, #18
 		bl GetGpio
-		cmp r0, #1
-		beq cambiodireccion
-		bne hardwaremode
+		teq r0, #0
+		bne cambiodireccion
 		bl retro
 		b hardwaremode
 	

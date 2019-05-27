@@ -130,7 +130,7 @@ SetGpio:
 
 .global GetGpio
 GetGpio:	
-    push {lr}
+    push {r4-r12, lr}
     mov r10, r0         @se recibe y guarda el puerto a verificar
     ldr r6, =myloc
  	ldr r0, [r6]		@ obtener direccion de la memoria virtual 
@@ -142,4 +142,4 @@ GetGpio:
 	//pop {r0-r12}
 	and r5,r7 
 	mov r0, r5
-    pop {pc}
+    pop {r4-r12, pc}
