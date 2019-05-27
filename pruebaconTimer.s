@@ -60,7 +60,7 @@ loopRight:
 
 
 
-/*loopLeft:
+loopLeft:
 	@Apagar GPIO 26
 	mov r0,#26
 	mov r1,#0
@@ -79,7 +79,7 @@ loopRight:
 	bl SetGpio
 
 
-	b encenderLeft*/
+	b encenderLeft
 
 encenderRight:
 	mov r0,#26		@se enciende el 26 y 6
@@ -126,7 +126,7 @@ encenderRight:
 
 	b loopRight  @Se apagan todos
 
-/*encenderLeft:
+encenderLeft:
 	mov r0,#13		@se enciende el 13 y 6
 	mov r1,#1
 	bl SetGpio
@@ -166,7 +166,7 @@ encenderRight:
 	mov r0,#6		@se enciende el 6 y 26
 	mov r1,#1
 	bl SetGpio
-	bl wait*/
+	bl wait
 
 	@ loopLeft  @Se apagan todos
 

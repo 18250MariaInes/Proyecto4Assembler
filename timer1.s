@@ -19,7 +19,7 @@ f_hertz: .asciz "Hertz:\t\t\t%f\n"
 f_sec:   .asciz "Seconds:\t\t%f\n" 
 start:   .word 0
 cycles:  .word 0
-delayReg:.word 0x000FFFFF
+delayReg:.word 0x000CCCCC  @FFFFF
 @0x281EEEEE un seg
 
 .text
@@ -47,7 +47,7 @@ compare:
 @ Output: seconds
 @ ---------------------------
 retro:
-    push {lr}
+    push {r4-r12,lr}
     # get CYCLES_PER_SEC 
     bl  getCPS
     mov r5,r0    
@@ -90,5 +90,5 @@ retro:
 
     mov r0, #15   @se revisa el boton
     bl GetGpio
-    pop {pc}
+    pop {r4-r12, pc}
 
