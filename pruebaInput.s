@@ -84,6 +84,7 @@ main:
 		ldr r9, =eleccion
 		ldr r9, [r9]
 		cmp r9, #1
+		moveq r6, #0
 		beq imprimirMenu
 		cmpne r9, #2
 		moveq r6, #1
@@ -150,7 +151,8 @@ main:
 		beq opcionderecha
 		cmp r11, #1
 		beq opcionizquierda
-		
+	
+	
 
 	aumentar:
 		cmp r8, #6
@@ -179,7 +181,7 @@ main:
 		beq rapidaRight
 		cmp r8, #6
 		beq flashRight
-		b imprimirMenu
+		b comparar
 
 
 	opcionizquierda:
@@ -193,7 +195,7 @@ main:
 		beq rapidaLeft
 		cmp r8, #6
 		beq flashLeft
-		b imprimirMenu
+		b comparar
 
 	Num_Mal:
 		ldr r0,=mal
@@ -206,42 +208,42 @@ main:
 		sub r10, r10, #1
 		cmp r10, #0
 		bne inicioRight
-		b imprimirMenu
+		beq comparar
 		
 	bajaRight:
 		bl vel4Right
 		sub r10, r10, #1
 		cmp r10, #0
 		bne bajaRight
-		b imprimirMenu
+		b comparar
 
 	tortugaRight:
 		bl vel5Right
 		sub r10, r10, #1
 		cmp r10, #0
 		bne tortugaRight
-		b imprimirMenu
+		b comparar
 
 	rapidaRight:
 		bl vel2Right
 		sub r10, r10, #1
 		cmp r10, #0
 		bne rapidaRight
-		b imprimirMenu
+		b comparar
 
 	flashRight:
 		bl vel1Right
 		sub r10, r10, #1
 		cmp r10, #0
 		bne flashRight
-		b imprimirMenu
+		b comparar
 
 	inicioLeft:
 		bl vel3Left
 		sub r10, r10, #1
 		cmp r10, #0
 		bne inicioLeft
-		b imprimirMenu
+		b comparar
 		
 
 	bajaLeft:
@@ -249,30 +251,34 @@ main:
 		sub r10, r10, #1
 		cmp r10, #0
 		bne bajaLeft
-		b imprimirMenu
+		b comparar
 
 	tortugaLeft:
 		bl vel5Left
 		sub r10, r10, #1
 		cmp r10, #0
 		bne tortugaLeft
-		b imprimirMenu
+		b comparar
 
 	rapidaLeft:
 		bl vel2Left
 		sub r10, r10, #1
 		cmp r10, #0
 		bne rapidaLeft
-		b imprimirMenu
+		b comparar
 
 	flashLeft:
 		bl vel1Left
 		sub r10, r10, #1
 		cmp r10, #0
 		bne flashLeft
-		b imprimirMenu
+		b comparar
 		
-
+	comparar:
+		cmp r6, #0
+		beq imprimirMenu
+		cmp r6,#1
+		beq hardwaremode
 
 	/* salida correcta */
 	fin:

@@ -26,7 +26,7 @@
 .global GetGpioAddress
 GetGpioAddress:
 	gpioAddr .req r0
-	push {lr}
+	push {r4-r12, lr}
 	@ldr gpioAddr,=0x20200000
 	ldr gpioAddr,=0x3F200000 @GPIO base para raspberry 2
 	@modificaciones para utilizar la memoria virtual
@@ -34,7 +34,7 @@ GetGpioAddress:
  	mov r7, r0  @ r7 points to that physical page
  	ldr r6, =myloc
  	str r7, [r6] @ save this 
-	pop {pc}
+	pop {r4-r12,pc}
 	.unreq gpioAddr
 
 /* NEW
@@ -50,7 +50,7 @@ SetGpioFunction:
 	cmpls pinFunc,#7
 	movhi pc,lr
 
-	push {lr}
+	push {r4-r12, lr}
 	mov r2,pinNum
 	.unreq pinNum
 	pinNum .req r2
@@ -85,7 +85,7 @@ SetGpioFunction:
 	str pinFunc,[gpioAddr]
 	.unreq pinFunc
 	.unreq gpioAddr
-	pop {pc}
+	pop {r4-r12, pc}
 
 /* NEW
 * SetGpio sets the GPIO pin addressed by register r0 high if r1 != 0 and low
@@ -99,7 +99,7 @@ SetGpio:
 
 	cmp pinNum,#53
 	movhi pc,lr
-	push {lr}
+	push {r4-r12, lr}
 	mov r2,pinNum	
     .unreq pinNum	
     pinNum .req r2
@@ -126,7 +126,7 @@ SetGpio:
 	strne setBit,[gpioAddr,#28]
 	.unreq setBit
 	.unreq gpioAddr
-	pop {pc}
+	pop {r4-r12, pc}
 
 .global GetGpio
 GetGpio:	
