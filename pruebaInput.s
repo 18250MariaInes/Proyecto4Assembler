@@ -10,11 +10,10 @@
 main:
 	stmfd sp!, {lr}	@@ SP = R13 link register
 
-	mov r10, #250
-	mov r11, #0
-	mov r6, #0
-	@utilizando la biblioteca GPIO (gpio0_2.s)
-	bl GetGpioAddress @solo se llama una vez
+	mov r10, #250  @@contador para que stepper de media vuelta
+	mov r11, #0  @Deterina direccion actual del stepper  0: Derecha   1: Izquierda
+	mov r6, #0    @@Modo seleccionado para controlar 1: Hardware  0: Software
+	bl GetGpioAddress 
 	@GPIO para lectura (entrada) puerto 18 del boton cambiar direccion
 	mov r0,#18
 	mov r1,#0
@@ -30,40 +29,42 @@ main:
 	mov r1,#0
 	bl SetGpioFunction
 
-	@GPIO para lectura (entrada) puerto 21 del boton aumentar velocidad
+	@GPIO para lectura (entrada) puerto 21 del boton  velocida tortuga
 	mov r0,#21
 	mov r1,#0
 	bl SetGpioFunction
 
-	@GPIO para lectura (entrada) puerto 20 del boton aumentar velocidad
+	@GPIO para lectura (entrada) puerto 20 del boton velocidad lenta
 	mov r0,#20
 	mov r1,#0
 	bl SetGpioFunction
 
-	@GPIO para lectura (entrada) puerto 16 del boton aumentar velocidad
+	@GPIO para lectura (entrada) puerto 16 del boton velocidad normal
 	mov r0,#16
 	mov r1,#0
 	bl SetGpioFunction
 
-	@GPIO para lectura (entrada) puerto 07 del boton aumentar velocidad
+	@GPIO para lectura (entrada) puerto 07 del boton velocidad rapida 
 	mov r0,#7
 	mov r1,#0
 	bl SetGpioFunction
 
-	@GPIO para lectura (entrada) puerto 08 del boton aumentar velocidad
+	@GPIO para lectura (entrada) puerto 08 del boton velocidad flash
 	mov r0,#8
 	mov r1,#0
 	bl SetGpioFunction
 
-	@GPIO para lectura (entrada) puerto 23 del boton aumentar velocidad
+	@GPIO para lectura (entrada) puerto 23 del boton apagar
 	mov r0,#23
 	mov r1,#0
 	bl SetGpioFunction
 
-	@GPIO para escritura (salida) puerto 25
+	@GPIO para escritura (salida) puerto 25 para LED
 	mov r0,#25
 	mov r1,#1
 	bl SetGpioFunction
+
+	/*PUERTOS DEL STEPPER*/
 
 	@GPIO para escritura (salida) puerto 26 
 	mov r0,#26
@@ -84,8 +85,8 @@ main:
 	mov r0,#6
 	mov r1,#1
 	bl SetGpioFunction
-
-	mov r8,#3
+  
+	mov r8,#3    @Controlador de velocidad del stepper de 0 a 5, donde 3 es la velocidad intermedia
 	
 
 	//Empiezan todas apagadas
@@ -111,6 +112,7 @@ main:
 	bl SetGpio
 
 	modo:
+		@Se elije software o hardware
 		ldr r0, =formato
 		bl printf
 		ldr r0,=mensaje_modo
@@ -118,27 +120,28 @@ main:
 		ldr r0,=entrada
 		ldr r1,=eleccion
 		bl scanf
-		cmp r0, #0
-		beq Num_Mal
-		ldr r9, =eleccion
+		cmp r0, #0  @Se verifica que la opcion sea correcta
+		beq Num_Mal      
+		ldr r9, =eleccion    @@Se evalua la opcion
 		ldr r9, [r9]
 		cmp r9, #1
 		moveq r6, #0
-		beq imprimirMenu
+		beq imprimirMenu    @@Si eljie software se imprime el menu
 		cmpne r9, #2
 		moveq r6, #1
-		beq hardwaremode
+		beq hardwaremode    @@Si elije hardware se permite presionar los botones
 		bne modo
 
 
 	hardwaremode:
-		@Encender LED
+		@Encender LED para que presione boton
 		mov r0,#25
 		mov r1,#1
 		bl SetGpio
 		mov r10, #250
-		mov r6, #1
+		mov r6, #1     @Se establece 1 en r6 para saber que esta en modo hardware
 		bl retro
+		@@Se evalua que puerto presiono y se ejecuta la opcion seleccionada
 		mov r0, #15
 		bl GetGpio
 		teq r0, #0
@@ -189,11 +192,11 @@ main:
 		movne r8,#6
 		bne evaluar
 		bl retro
-		b hardwaremode
+		b hardwaremode   @Se repite el ciclo
 	
 
 	imprimirMenu:
-		mov r6, #0
+		mov r6, #0   @Se establece r6 con 0 para modo software
 		mov r10, #250
 		/*mov r1, r10
 		ldr r0, =formato
@@ -211,7 +214,7 @@ main:
 		beq Num_Mal
 
 	verOpcion:
-		/*Se evalua que numero ingreso*/
+		/*Se evalua que numero ingreso y se ejecuta la opcioin seleccionada*/
 		ldr r9, =eleccion
 		ldr r9, [r9]
 		cmp r9, #1
@@ -229,6 +232,7 @@ main:
 		mov r1,#0
 		bl SetGpio
 		//mov r10, #250
+		@Se evalua que direccion actualmente va el stepper
 		cmp r11, #0
 		beq opcionderecha
 		cmp r11, #1
@@ -237,22 +241,26 @@ main:
 	
 
 	aumentar:
+		@Incrementa la velocidad actual
 		cmp r8, #6
 		addlt r8, r8, #1
 		b evaluar
 
 	disminuir:
+		@Disminuye la velocidad del stepper
 		cmp r8, #2
 		subgt r8, r8, #1
 		b evaluar
 
 	cambiodireccion:
+		@Switch de la direccion a la que el stepper gira
 		cmp r11, #0
 		moveq r11, #1
 		movne r11, #0
 		b evaluar
 
 	opcionderecha:
+		@Se evalua la velocidad actual para ejecutarla girando hacia la derecha
 		cmp r8, #4
 		beq inicioRight
 		cmp r8, #3
@@ -267,6 +275,7 @@ main:
 
 
 	opcionizquierda:
+		@Se evalua la velocidad actual para ejecutarla girando hacia la Izquierda
 		cmp r8, #4
 		beq inicioLeft
 		cmp r8, #3
@@ -286,6 +295,7 @@ main:
 		b imprimirMenu
 
 	inicioRight:
+		@Giro predeterminado hacia derecha velocidad medida
 		bl vel3Right
 		sub r10, r10, #1
 		cmp r10, #0
@@ -357,6 +367,7 @@ main:
 		b comparar
 		
 	comparar:
+		@@Compara en que modo se esta ejcutando el Programa
 		cmp r6, #0
 		beq imprimirMenu
 		cmp r6,#1
