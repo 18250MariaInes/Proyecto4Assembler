@@ -30,7 +30,42 @@ main:
 	mov r1,#0
 	bl SetGpioFunction
 
-	@GPIO para lectura (entrada) puerto 26 
+	@GPIO para lectura (entrada) puerto 21 del boton aumentar velocidad
+	mov r0,#21
+	mov r1,#0
+	bl SetGpioFunction
+
+	@GPIO para lectura (entrada) puerto 20 del boton aumentar velocidad
+	mov r0,#20
+	mov r1,#0
+	bl SetGpioFunction
+
+	@GPIO para lectura (entrada) puerto 16 del boton aumentar velocidad
+	mov r0,#16
+	mov r1,#0
+	bl SetGpioFunction
+
+	@GPIO para lectura (entrada) puerto 07 del boton aumentar velocidad
+	mov r0,#7
+	mov r1,#0
+	bl SetGpioFunction
+
+	@GPIO para lectura (entrada) puerto 08 del boton aumentar velocidad
+	mov r0,#8
+	mov r1,#0
+	bl SetGpioFunction
+
+	@GPIO para lectura (entrada) puerto 23 del boton aumentar velocidad
+	mov r0,#23
+	mov r1,#0
+	bl SetGpioFunction
+
+	@GPIO para escritura (salida) puerto 25
+	mov r0,#25
+	mov r1,#1
+	bl SetGpioFunction
+
+	@GPIO para escritura (salida) puerto 26 
 	mov r0,#26
 	mov r1,#1
 	bl SetGpioFunction
@@ -70,6 +105,10 @@ main:
 	mov r0,#6
 	mov r1,#0
 	bl SetGpio
+	@Apagar GPIO 25 LED
+	mov r0,#25
+	mov r1,#0
+	bl SetGpio
 
 	modo:
 		ldr r0, =formato
@@ -93,6 +132,10 @@ main:
 
 
 	hardwaremode:
+		@Encender LED
+		mov r0,#25
+		mov r1,#1
+		bl SetGpio
 		mov r10, #250
 		mov r6, #1
 		bl retro
@@ -110,6 +153,41 @@ main:
 		bl GetGpio
 		teq r0, #0
 		bne cambiodireccion
+		bl retro
+		mov r0, #23
+		bl GetGpio
+		teq r0, #0
+		bne fin
+		bl retro
+		mov r0, #21
+		bl GetGpio
+		teq r0, #0
+		movne r8,#2
+		bne evaluar
+		bl retro
+		mov r0, #20
+		bl GetGpio
+		teq r0, #0
+		movne r8,#3
+		bne evaluar
+		bl retro
+		mov r0, #16
+		bl GetGpio
+		teq r0, #0
+		movne r8,#4
+		bne evaluar
+		bl retro
+		mov r0, #7
+		bl GetGpio
+		teq r0, #0
+		movne r8,#5
+		bne evaluar
+		bl retro
+		mov r0, #8
+		bl GetGpio
+		teq r0, #0
+		movne r8,#6
+		bne evaluar
 		bl retro
 		b hardwaremode
 	
@@ -146,6 +224,10 @@ main:
 		beq fin
 		bne Num_Mal
 		evaluar:
+		@Encender LED
+		mov r0,#25
+		mov r1,#0
+		bl SetGpio
 		//mov r10, #250
 		cmp r11, #0
 		beq opcionderecha
