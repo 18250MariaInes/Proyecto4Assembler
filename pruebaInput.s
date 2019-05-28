@@ -195,9 +195,9 @@ main:
 	imprimirMenu:
 		mov r6, #0
 		mov r10, #250
-		mov r1, r10
+		/*mov r1, r10
 		ldr r0, =formato
-		bl printf
+		bl printf*/
 		ldr r0,=mensaje_ingreso
 		bl puts
 		@ ingreso de datos
@@ -224,7 +224,7 @@ main:
 		beq fin
 		bne Num_Mal
 		evaluar:
-		@Encender LED
+		@Apagar LED
 		mov r0,#25
 		mov r1,#0
 		bl SetGpio
@@ -364,6 +364,10 @@ main:
 
 	/* salida correcta */
 	fin:
+		@Apagar LED
+		mov r0,#25
+		mov r1,#0
+		bl SetGpio
 		ldr r0, =despedida
 		bl puts
 		mov r0, #0
